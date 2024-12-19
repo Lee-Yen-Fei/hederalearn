@@ -19,17 +19,21 @@ import resourceRoutes from "./routes/resourceRoutes.js";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://hederalearn.streamlit.app/', 
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true,
+}));
 
 // Register routes
-app.use("/api/payments", paymentRoutes);
-app.use("/api/resources", resourceRoutes);
+app.use("/payments", paymentRoutes);
+app.use("/resources", resourceRoutes);
 
 // Modify tutorRoutes to interact with HCS
-app.use("/api/tutors", tutorRoutes);
+app.use("/tutors", tutorRoutes);
 
 // Add resource route (to handle resources)
-app.post("/api/resources", async (req, res) => {
+app.post("/resources", async (req, res) => {
     try {
         // Submit resource data to HCS using the generalized function
         await sendHCSMessage(process.env.RESOURCE_TOPIC_ID, "resource-upload", req.body);
@@ -40,7 +44,7 @@ app.post("/api/resources", async (req, res) => {
 });
 
 // Tutor route (unchanged, but consider making sure it adds tutors via HCS)
-app.post("/api/tutors", async (req, res) => {
+app.post("/tutors", async (req, res) => {
     try {
         // Send tutor data to HCS using the generalized function
         await sendHCSMessage(process.env.TUTOR_TOPIC_ID, "tutor-request", req.body);
@@ -51,7 +55,7 @@ app.post("/api/tutors", async (req, res) => {
 });
 
 // Tutor route to fetch tutors from HCS (query from mirror node)
-app.get("/api/tutors", async (req, res) => {
+app.get("/tutors", async (req, res) => {
     const filters = req.query; // Extract filters from the request query params
     try {
         const messages = await fetchMessagesFromTopic(process.env.TUTOR_TOPIC_ID);
