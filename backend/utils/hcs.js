@@ -1,16 +1,21 @@
-import { Client, TopicMessageSubmitTransaction} from "@hashgraph/sdk";
+import { Client, TopicMessageSubmitTransaction } from "@hashgraph/sdk";
 import path from 'path';
 import dotenv from "dotenv";
 import { fileURLToPath } from 'url';
 
-delete process.env.OPERATOR_ID;
-delete process.env.OPERATOR_KEY;
+// Ensure dotenv is loaded properly before any other code executes
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Resolve path to .env file correctly
 const envPath = path.resolve(__dirname, '../.env');
-console.log("Resolved .env file path:", envPath);
-dotenv.config({path:envPath});
+
+// If in development, load .env file; in production, environment variables will be set by Render
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: envPath });
+  console.log("Resolved .env file path:", envPath); // Optional: log to verify path
+}
+
 const operatorId = process.env.OPERATOR_ID;
 const operatorKey = process.env.OPERATOR_KEY; 
 

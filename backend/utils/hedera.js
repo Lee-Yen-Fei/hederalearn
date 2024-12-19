@@ -1,7 +1,15 @@
+if (process.env.NODE_ENV !== 'production') {  // Example condition to load dotenv in non-production environments
+  import('dotenv')
+      .then((dotenv) => {
+          dotenv.config();  // Now you can use the dotenv functionality
+          console.log('Environment variables loaded.');
+      })
+      .catch((error) => {
+          console.error('Error loading dotenv:', error);
+      });
+}
 import { Client, PrivateKey, AccountId, AccountBalanceQuery, FileCreateTransaction, Hbar, TokenCreateTransaction, TokenMintTransaction, FileContentsQuery, FileAppendTransaction } from "@hashgraph/sdk";
-import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
-dotenv.config();
 
 const client = Client.forTestnet(); // Change to Client.forMainnet() for production
 client.setOperator(

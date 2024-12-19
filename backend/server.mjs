@@ -1,5 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {  // Example condition to load dotenv in non-production environments
+    import('dotenv')
+        .then((dotenv) => {
+            dotenv.config();  // Now you can use the dotenv functionality
+            console.log('Environment variables loaded.');
+        })
+        .catch((error) => {
+            console.error('Error loading dotenv:', error);
+        });
+}
 
 import express from "express";
 import cors from "cors";
