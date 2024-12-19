@@ -3,7 +3,7 @@ import subprocess
 import os
 import asyncio
 
-API_BASE_URL = "http://localhost:5000/api"
+API_BASE_URL = "https://hederalearn.onrender.com"
 
 def process_payment(sender_account_id, sender_private_key, recipient_account_id, amount):
     payload = {
