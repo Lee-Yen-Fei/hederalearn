@@ -4,6 +4,9 @@ import requests
 st.set_page_config(page_title="Search for Tutors", page_icon="🌍")
 st.title("Search for Tutors")
 
+# Define the base URL of the backend
+API_BASE_URL = "https://hederalearn.onrender.com"
+
 # Search filters
 st.subheader("Search Filters")
 subject = st.text_input("Enter Subject (e.g., Mathematics):")
@@ -15,7 +18,7 @@ results_placeholder = st.empty()
 
 # Function to fetch tutors from the backend
 def search_tutors(subject=None, location=None, max_rate=None, page=1, limit=10):
-    base_url = "http://127.0.0.1:5000/api/tutors"
+    base_url = f"{API_BASE_URL}/api/tutors"
     params = {}
     if subject:
         params["subject"] = subject

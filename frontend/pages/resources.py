@@ -3,6 +3,9 @@ from utils.api import authenticate_user
 import requests
 import asyncio
 
+# Define the base URL of the backend
+API_BASE_URL = "https://hederalearn.onrender.com"
+
 # Function to authenticate the user asynchronously
 async def authenticate_user_ui(username):
     try:
@@ -21,23 +24,8 @@ async def authenticate_user_ui(username):
         st.write(f"Debug Info: Authentication failed for user {username}.")
         st.experimental_rerun()
 
-
 # Resources page render
 def render():
-    # Display the authentication section if the user is not authenticated
-    # if not getattr(st.session_state, 'authenticated', False):
-    #     st.subheader("User Authentication")
-    #     username = st.text_input("Operator ID (Account ID)")  # Updated label
-
-    #     if st.button("Login"):
-    #         if username:
-    #             # Use asyncio.run to run the async function in a synchronous context
-    #             asyncio.run(authenticate_user_ui(username))  # Correctly handle async
-    #         else:
-    #             st.error("Please enter your Operator ID.")
-    #     return  # Stop rendering the rest if not authenticated
-
-    # If authenticated, proceed with the resources page
     st.title("Resources")
 
     # Upload section
@@ -51,7 +39,7 @@ def render():
         if title and subject and price and file:
             files = {"file": (file.name, file, "application/pdf")}
             data = {"title": title, "subject": subject, "price": price}
-            response = requests.post("http://127.0.0.1:5000/api/resources/upload", data=data, files=files)
+            response = requests.post(f"{API_BASE_URL}/api/resources/upload", data=data, files=files)
 
             st.write(f"Response Status Code: {response.status_code}")
             st.write(f"Response Text: {response.text}")
@@ -60,14 +48,14 @@ def render():
                 st.success("Resource uploaded successfully!")
             else:
                 st.error(f"Error uploading resource: {response.json().get('error', 'Unknown error')}")
-       
+
     # Pagination controls
     st.subheader("Available Resources")
     page = st.number_input("Page", min_value=1, value=1, step=1)
     limit = st.number_input("Limit", min_value=1, value=10, step=1)
 
     params = {"page": page, "limit": limit}
-    response = requests.get("http://127.0.0.1:5000/api/resources", params=params)
+    response = requests.get(f"{API_BASE_URL}/api/resources", params=params)
 
     if response.status_code == 200:
         resources = response.json()
@@ -75,7 +63,7 @@ def render():
             for resource in resources["data"]:
                 st.write(f"**Title:** {resource['title']}, **Subject:** {resource['subject']}, **Price:** {resource['price']} HBAR")
                 if st.button(f"Download {resource['title']}", key=resource["_id"]):
-                    download_response = requests.get(f"http://127.0.0.1:5000/api/resources/download/{resource['_id']}")
+                    download_response = requests.get(f"{API_BASE_URL}/api/resources/download/{resource['_id']}")
                     if download_response.status_code == 200:
                         st.success("Download started.")
                         with open(resource["title"] + ".pdf", "wb") as f:
